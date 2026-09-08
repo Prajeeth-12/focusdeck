@@ -1,4 +1,4 @@
-﻿import Dexie, { type Table } from 'dexie';
+import Dexie, { type Table } from 'dexie';
 import type { Task, Status } from '../types/task';
 import { getTodayDateString, calculateNextRecurrenceDate } from '../utils/dateUtils';
 
@@ -121,6 +121,12 @@ export const SAMPLE_TASKS: Omit<Task, 'id' | 'createdAt'>[] = [
 ];
 
 export async function initializeDatabase() {
+  if (navigator.storage && navigator.storage.persist) {
+    try {
+      await navigator.storage.persist();
+    } catch (_) {}
+  }
+
   const count = await db.tasks.count();
   if (count === 0) {
     const now = new Date().toISOString();
